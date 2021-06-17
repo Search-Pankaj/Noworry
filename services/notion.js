@@ -1,30 +1,35 @@
-const dotenv = require("dotenv").config();
-const { Client } = require("@notionhq/client");
+const videosEl = document.querySelector("#videos");
+const loadingEl = document.querySelector("#loading");
+let loading = false;
 
-// Init client
-const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
-});
-
-const database_id = process.env.NOTION_DATABASE_ID;
-
-module.exports = async function getVideos() {
-  const payload = {
-    path: `databases/${database_id}/query`,
-    method: "POST",
-  };
-
-  const { results } = await notion.request(payload);
-
-  const videos = results.map((page) => {
-    return {
-      id: page.id,
-      title: page.properties.Name.title[0].text.content,
-      date: page.properties.Date.date.start,
-      tags: page.properties.Tags.rich_text[0].text.content,
-      description: page.properties.Description.rich_text[0].text.content,
-    };
-  });
-
-  return videos;
+const getVideosFromBackend = async () => {
+  loading = true;
+  const res = await fetch("http://localhost:5000/videos");
+  const data = await res.json();
+  loading = false;
+  return data;
 };
+
+const addVideosToDom = async () => {
+  const videos = await getVideosFromBackend();
+
+  if (!loading) {
+    loadingEl.innerHTML = "";
+  }
+
+  videos.forEach((video) => {
+    const div = document.createElement("div");
+    div.className = "video";
+    div.innerHTML = `
+      <h3>${video.title}</h3>
+      <ul>
+        <li><strong>Release Date: </strong> ${video.date}</li>
+        <li><strong>Description: </strong> ${video.description}</li>
+      </ul>
+      <div class="tags">${video.tags}</div>
+    `;
+    videosEl.appendChild(div);
+  });
+};
+
+addVideosToDom();

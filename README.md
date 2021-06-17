@@ -1,12 +1,6 @@
-# Notion API Video Schedule
+# Noworry
 
-This is part of a YouTube tutorial using the Notion API to fetch scheduled YouTube videos from notion and display in a webpage
-
-## Notion Setup
-
-- Create a calendar database in Notion with a title, date, tags and description
-- Create an integration
-- Share your calendar with the integration
+this application allow student to stay updated with upcoming event in their college .
 
 ## Usage
 
